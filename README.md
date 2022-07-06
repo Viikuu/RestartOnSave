@@ -25,7 +25,7 @@ $ npm install
 $ node app.js param1 param2
 ```
 Where 
-- param1 is your node app program which u want to run
+- param1 is your node app specific localisation which u want to run
 - param2 is your node app directory where u want to check for file changes
 
 By default:
