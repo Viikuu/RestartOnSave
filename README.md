@@ -14,7 +14,7 @@ A homemade version of Nodemon to restart long running node software on change in
 This app is simple automatic restart on files change program.
 	
 ## Inspiration
-This project functionality was inspired by [Nodemon tool]([https://pages.github.com/](https://www.npmjs.com/package/nodemon)).
+This project functionality was inspired by [Nodemon tool](https://www.npmjs.com/package/nodemon).
 ## Setup
 To run this project, do the following steps:
 *download repository files
