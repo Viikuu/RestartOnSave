@@ -9,5 +9,11 @@
   "type": "module",
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "xo": {
+    "rules": {
+      "no-await-in-loop": "off",
+      "spaced-comment": "off"
+    }
+  }
 }
