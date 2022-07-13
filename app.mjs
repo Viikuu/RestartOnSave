@@ -6,11 +6,12 @@ import {directory} from './src/foldering.mjs';
 const filedir = process.argv[2];
 
 function killchild(child) {
-	child.on('exit', (code, signal) => {
-		if (signal === 'SIGINT') {
-			setTimeout(child.kill, 3000);
-		}
+	child.once('exit', () => {
+		clearInterval(killTimeout);
 	});
+	const killTimeout = setTimeout(() => {
+		child.kill();
+	}, 3000);
 
 	child.kill('SIGINT');
 }
