@@ -1,4 +1,4 @@
-import {readdir, readFile, stat, writeFile} from 'node:fs/promises';
+import {readdir, readFile, stat} from 'node:fs/promises';
 import {join, dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import process from 'node:process';
@@ -24,10 +24,12 @@ async function readFiles(dir) {
 	try {
 		await readdir(dir);
 	} catch (error) {
-		throw new Error(`This directory does not exist (or program has no access to it)
-           Given Directory: ${dir}
-           Er Code: ${error.code}
-           Check directory!`);
+		throw new Error([
+			'This directory does not exist (or program has no access to it)',
+			`Given Directory: ${dir}`,
+			`Er Code: ${error.code}`,
+			'Check directory!',
+		].join('\n'));
 	}
 
 	return readdir(dir);
@@ -48,7 +50,6 @@ async function directory(dir = process.cwd(), options = optionsConst) {
 	for (const file of files) {
 		if (!ignorePaths.includes(file)) {
 			const filestat = await stat(join(dir, file));
-
 			if (filestat.isFile()) {
 				filepaths.push(join(dir, file));
 			} else if (filestat.isDirectory()) {
