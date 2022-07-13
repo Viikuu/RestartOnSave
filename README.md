@@ -40,6 +40,6 @@ By default:
 To add ignored directories go to /src and change ignorePaths.json file and add 'dirname' as below.
 
 ```
-['node_modules', 'public', '.idea', '.git', '.gitignore','dirname']
+['node_modules', '.idea', '.git', '.gitignore','dirname']
 ```
 
