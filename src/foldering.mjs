@@ -1,4 +1,4 @@
-import {readdir, readFile, stat} from 'node:fs/promises';
+import {readdir, readFile} from 'node:fs/promises';
 import {join, dirname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import process from 'node:process';
@@ -22,7 +22,9 @@ async function ignorePathsSet(ignorePath) { // Reading ignorePaths config
 
 async function readFiles(dir) {
 	try {
-		await readdir(dir);
+		await readdir(dir, {
+			withFileTypes: true,
+		});
 	} catch (error) {
 		throw new Error([
 			'This directory does not exist (or program has no access to it)',
@@ -32,7 +34,9 @@ async function readFiles(dir) {
 		].join('\n'));
 	}
 
-	return readdir(dir);
+	return readdir(dir, {
+		withFileTypes: true,
+	});
 }
 
 const optionsConst = {
@@ -48,12 +52,11 @@ async function directory(dir = process.cwd(), options = optionsConst) {
 		: [];
 
 	for (const file of files) {
-		if (!ignorePaths.includes(file)) {
-			const filestat = await stat(join(dir, file));
-			if (filestat.isFile()) {
-				filepaths.push(join(dir, file));
-			} else if (filestat.isDirectory()) {
-				filepaths = filepaths.concat(await directory(join(dir, file)));
+		if (!ignorePaths.includes(file.name)) {
+			if (file.isFile()) {
+				filepaths.push(join(dir, file.name));
+			} else if (file.isDirectory()) {
+				filepaths = filepaths.concat(await directory(join(dir, file.name)));
 			}
 		}
 	}
