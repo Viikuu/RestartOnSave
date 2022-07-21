@@ -1,24 +1,7 @@
-import {readdir, readFile} from 'node:fs/promises';
-import {join, dirname} from 'node:path';
-import {fileURLToPath} from 'node:url';
+import {readdir} from 'node:fs/promises';
+import {join} from 'node:path';
 import process from 'node:process';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-async function ignorePathsSet(ignorePath) { // Reading ignorePaths config
-	try {
-		JSON.parse(await readFile(ignorePath, 'utf8'));
-	} catch {
-		throw new Error([
-			'Config does not exist!',
-			`ignorePath.json file (${ignorePath}) does not exist!`,
-			'Create ignorePath.json config in src directory!',
-		].join('\n'));
-	}
-
-	return JSON.parse(await readFile(ignorePath, 'utf8'));
-}
+import {gitIgnoreSet} from './ignoring.mjs';
 
 async function readFiles(dir) {
 	try {
@@ -39,20 +22,15 @@ async function readFiles(dir) {
 	});
 }
 
-const optionsConst = {
-	ignoreConfigPath: join(__dirname, 'ignorePaths.json'),
-	ignore: true, // Turning on ignoring files
-};
-
-async function directory(dir = process.cwd(), options = optionsConst) {
+async function directory(dir = process.cwd()) {
 	let filepaths = [];
 	const files = await readFiles(dir);
-	const ignorePaths = options.ignore
-		? await ignorePathsSet(options.ignoreConfigPath)
-		: [];
+
+	const ignoreObject = await gitIgnoreSet(['.git/', '.idea/']);
+	const ignorePaths = ignoreObject.ignoreFileDirent(files);
 
 	for (const file of files) {
-		if (!ignorePaths.includes(file.name)) {
+		if (ignorePaths.includes(file)) {
 			if (file.isFile()) {
 				filepaths.push(join(dir, file.name));
 			} else if (file.isDirectory()) {

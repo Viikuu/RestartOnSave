@@ -1,6 +1,6 @@
 {
   "name": "restartonsave",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,9 @@
   "xo": {
     "rules": {
       "no-await-in-loop": "off",
-      "spaced-comment": "off"
+      "spaced-comment": "off",
+      "comma-dangle": "off",
+      "unicorn/no-await-expression-member": "off"
     }
   }
 }
