@@ -25,8 +25,14 @@ async function readFiles(dir) {
 async function directory(dir = process.cwd()) {
 	let filepaths = [];
 	const files = await readFiles(dir);
+	let gitignorepath = join(process.cwd(), '.gitignore');
+	for (const file of files) {
+		if (file.name === '.gitignore') {
+			gitignorepath = join(dir, file.name);
+		}
+	}
 
-	const ignoreObject = await gitIgnoreSet(['.git/', '.idea/']);
+	const ignoreObject = await gitIgnoreSet(['.git/', '.idea/'], gitignorepath);
 	const ignorePaths = ignoreObject.ignoreFileDirent(files);
 
 	for (const file of files) {

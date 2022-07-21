@@ -1,6 +1,4 @@
 import {readFile} from 'node:fs/promises';
-import {join} from 'node:path';
-import process from 'node:process';
 
 class GitIgnoreParser {
 	constructor(GitIgnorePath) {
@@ -109,8 +107,8 @@ class GitIgnoreParser {
 	}
 }
 
-async function gitIgnoreSet(AdditionalElementsArray = []) {
-	const GitIgnore = new GitIgnoreParser(join(process.cwd(), '.gitignore'));
+async function gitIgnoreSet(AdditionalElementsArray = [], gitignorepath) {
+	const GitIgnore = new GitIgnoreParser(gitignorepath);
 	await GitIgnore._getIgnore();
 	GitIgnore.addPattern(AdditionalElementsArray);
 	return GitIgnore;
