@@ -33,5 +33,5 @@ Where
 
 ### Ignore files
 
-App uses .gitignore file to set which files to ignore.
+App uses .gitignore file to set which files to ignore. (Works on smt*, *smt, dir/ and filenames) 
 
