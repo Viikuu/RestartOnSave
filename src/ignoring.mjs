@@ -1,13 +1,13 @@
 import {readFile} from 'node:fs/promises';
 
 class GitIgnoreParser {
-	constructor(GitIgnorePath) {
-		this.GitIgnorePath = GitIgnorePath;
-		this.IgnoredFiles = [];
+	constructor(gitIgnorePath) {
+		this.gitIgnorePath = gitIgnorePath;
+		this.ignoredFiles = [];
 	}
 
 	async _getIgnore() {
-		this.IgnoredFiles = (await readFile(this.GitIgnorePath, 'utf8'))
+		this.ignoredFiles = (await readFile(this.gitIgnorePath, 'utf8'))
 			.split('\r\n')
 			.filter(line => (!line.startsWith('#')
 				&& line !== ''
@@ -18,21 +18,21 @@ class GitIgnoreParser {
 	}
 
 	_setDirIgnore() {
-		this.DirIgnore = this.IgnoredFiles
+		this.dirIgnore = this.ignoredFiles
 			.filter(line => line.includes('/'))
 			.map(line => line.slice(0, line.indexOf('/')));
 	}
 
 	_setStartIgnore() {
-		this.StartIgnore = this.IgnoredFiles.filter(line => line.endsWith('*'));
+		this.startIgnore = this.ignoredFiles.filter(line => line.endsWith('*'));
 	}
 
 	_setEndIgnore() {
-		this.EndIgnore = this.IgnoredFiles.filter(line => line.startsWith('*'));
+		this.endIgnore = this.ignoredFiles.filter(line => line.startsWith('*'));
 	}
 
 	_setElseIgnore() {
-		this.ElseIgnore = this.IgnoredFiles.filter(line => !line.endsWith('/')
+		this.elseIgnore = this.ignoredFiles.filter(line => !line.endsWith('/')
 			&& !line.endsWith('*')
 			&& !line.startsWith('*')
 			&& !line.includes('/')
@@ -47,7 +47,7 @@ class GitIgnoreParser {
 	}
 
 	startsWithPattern(stringElement) {
-		for (const element of this.StartIgnore) {
+		for (const element of this.startIgnore) {
 			if (stringElement.startsWith(element)) {
 				return false;
 			}
@@ -57,7 +57,7 @@ class GitIgnoreParser {
 	}
 
 	endsWithPattern(stringElement) {
-		for (const element of this.EndIgnore) {
+		for (const element of this.endIgnore) {
 			if (stringElement.endsWith(element)) {
 				return false;
 			}
@@ -67,7 +67,7 @@ class GitIgnoreParser {
 	}
 
 	dirPatternString(stringElement) {
-		for (const element of this.DirIgnore) {
+		for (const element of this.dirIgnore) {
 			if (stringElement === element) {
 				return false;
 			}
@@ -77,28 +77,28 @@ class GitIgnoreParser {
 	}
 
 	elsePattern(stringElement) {
-		return !this.ElseIgnore.includes(stringElement);
+		return !this.elseIgnore.includes(stringElement);
 	}
 
-	addPattern(Elements) {
-		this.IgnoredFiles = this.IgnoredFiles.concat(Elements);
+	addPattern(elements) {
+		this.ignoredFiles = this.ignoredFiles.concat(elements);
 		this._setAll();
 	}
 
-	ignoreString(StringArray) {
-		return StringArray.filter((element => this.elsePattern(element)
+	ignoreString(stringArray) {
+		return stringArray.filter((element => this.elsePattern(element)
 				&& this.startsWithPattern(element)
 				&& this.endsWithPattern(element)
 				&& this.dirPatternString(element)),
 		);
 	}
 
-	ignoreFileDirent(DirentArray) {
+	ignoreFileDirent(direntArray) {
 		return [].concat(
-			DirentArray
+			direntArray
 				.filter(element => element.isDirectory())
 				.filter(element => this.dirPatternString(element.name)),
-			DirentArray
+			direntArray
 				.filter(element => element.isFile())
 				.filter(element => this.elsePattern(element.name)
 					&& this.startsWithPattern(element.name)
@@ -107,11 +107,11 @@ class GitIgnoreParser {
 	}
 }
 
-async function gitIgnoreSet(AdditionalElementsArray = [], gitignorepath) {
-	const GitIgnore = new GitIgnoreParser(gitignorepath);
-	await GitIgnore._getIgnore();
-	GitIgnore.addPattern(AdditionalElementsArray);
-	return GitIgnore;
+async function gitIgnoreSet(additionalElementsArray = [], gitignorepath) {
+	const gitIgnore = new GitIgnoreParser(gitignorepath);
+	await gitIgnore._getIgnore();
+	gitIgnore.addPattern(additionalElementsArray);
+	return gitIgnore;
 }
 
 export {
